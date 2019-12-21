@@ -71,24 +71,37 @@ void property_override(char const prop[], char const value[], bool add = true)
     }
 }
 
+void set_rild_libpath(char const *variant)
+{
+    std::string libpath("/system/vendor/lib/libsec-ril.");
+    libpath += variant;
+    libpath += ".so";
+
+    property_override("rild.libpath", libpath.c_str());
+}
+
 void cdma_properties(char const *operator_alpha,
         char const *operator_numeric,
         char const *default_network,
-        char const *cdma_sub)
+        char const *cdma_sub,
+        char const *rild_lib_variant)
 {
     /* Dynamic CDMA Properties */
     property_set("ro.cdma.home.operator.alpha", operator_alpha);
     property_set("ro.cdma.home.operator.numeric", operator_numeric);
     property_set("ro.telephony.default_network", default_network);
     property_set("ro.telephony.default_cdma_sub", cdma_sub);
+    set_rild_libpath(rild_lib_variant);
 
     /* Static CDMA Properties */
     property_set("ril.subscription.types", "NV,RUIM");
     property_set("telephony.lteOnCdmaDevice", "1");
 }
 
-void gsm_properties()
+void gsm_properties(char const *rild_lib_variant)
 {
+    set_rild_libpath(rild_lib_variant);
+
     property_set("ro.telephony.default_network", "9");
     property_set("telephony.lteOnGsmDevice", "1");
 }
@@ -101,7 +114,7 @@ void vendor_load_properties() {
             const std::string &prop, const std::string &value) {
         auto prop_name = "ro.product." + source + prop;
         property_override(prop_name.c_str(), value.c_str(), false);
-    }; 
+    };
 
     if (bootloader.find("N900R4") == 0) {
         /* hlteusc */
@@ -109,9 +122,9 @@ void vendor_load_properties() {
             set_ro_product_prop(source, "fingerprint", "samsung/hlteusc/hlteusc:5.0/LRX21V/N900R4TYUDPE2:user/release-keys");
             set_ro_product_prop(source, "device", "hlteusc");
             set_ro_product_prop(source, "model", "SM-N900R4");
-        }     
+        }
         property_override("ro.build.description", "hlteusc-user 5.0 LRX21V N900R4TYUDPE2 release-keys");
-        cdma_properties("U.S. Cellular", "311220", "10", "0");
+        cdma_properties("U.S. Cellular", "311220", "10", "0", "usc");
     } else if (bootloader.find("N900T") == 0) {
         /* hltetmo */
        for (const auto &source : ro_product_props_default_source_order) {
@@ -120,7 +133,7 @@ void vendor_load_properties() {
             set_ro_product_prop(source, "model", "SM-N900T");
         }
         property_override("ro.build.description", "hltetmo-user 5.0 LRX21V N900TUVUFQD2 release-keys");
-        gsm_properties();
+        gsm_properties("tmo");
     } else if (bootloader.find("N900V") == 0) {
         /* hltevzw */
        for (const auto &source : ro_product_props_default_source_order) {
@@ -129,7 +142,7 @@ void vendor_load_properties() {
             set_ro_product_prop(source, "model", "SM-N900V");
         }
         property_override("ro.build.description", "hltevzw-user 5.0 LRX21V N900VVRSEPL1 release-keys");
-        cdma_properties("Verizon", "311480", "10", "1");
+        cdma_properties("Verizon", "311480", "10", "1", "vzw");
     } else if (bootloader.find("N900W8") == 0) {
         /* hltecan */
        for (const auto &source : ro_product_props_default_source_order) {
@@ -138,9 +151,9 @@ void vendor_load_properties() {
             set_ro_product_prop(source, "model", "SM-N900W8");
         }
         property_override("ro.build.description", "hltevl-user 5.0 LRX21V N900W8VLU2DPG1 release-keys");
-        gsm_properties();
+        gsm_properties("can");
     } else {
-        gsm_properties();
+        gsm_properties("tmo");
     }
 
     std::string device = GetProperty("ro.product.device", "");
