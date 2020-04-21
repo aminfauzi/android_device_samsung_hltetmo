@@ -14,9 +14,9 @@
 # limitations under the License.
 
 # Inherit some common LineageOS stuff.
-$(call inherit-product, vendor/lineage/config/common_full_phone.mk)
+$(call inherit-product, vendor/superior/config/common.mk)
 
 $(call inherit-product, device/samsung/hltetmo/full_hltetmo.mk)
 
 PRODUCT_DEVICE := hltetmo
-PRODUCT_NAME := lineage_hltetmo
+PRODUCT_NAME := superior_hltetmo
