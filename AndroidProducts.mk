@@ -14,9 +14,9 @@
 # limitations under the License.
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/lineage_hltetmo.mk
+    $(LOCAL_DIR)/aicp_hltetmo.mk
 
 COMMON_LUNCH_CHOICES := \
-    lineage_hltetmo-user \
-    lineage_hltetmo-userdebug \
-    lineage_hltetmo-eng
+    aicp_hltetmo-user \
+    aicp_hltetmo-userdebug \
+    aicp_hltetmo-eng
